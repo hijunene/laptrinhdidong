@@ -13,10 +13,10 @@ public class FakeData {
     }
 
     public void addDataFoood(Context context){
-        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Cơm gà \",5, 60000, '', 1)");
-        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Cơm chiên hải sản \",5, 45000, '', 2)");
-        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Sushi \",5, 40000, '', 3)");
-        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Hamburger \",5, 50000, '', 4)");
-        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Tiramisu \",5, 30000, '', 5)");
+        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Cơm gà \",5, 60000, \"https://quangtin131299.000webhostapp.com/com_ga.png\", 1)");
+        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Cơm chiên hải sản \",5, 45000, \"https://quangtin131299.000webhostapp.com/com_chien.png\", 2)");
+        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Sushi \",5, 40000, \"https://quangtin131299.000webhostapp.com/sushi.png\", 3)");
+        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Hamburger \",5, 50000, \"https://quangtin131299.000webhostapp.com/hamburger.png\", 4)");
+        DBUtil.getDBManager(context).createOrEditData("INSERT INTO food VALUES(null, \"Tiramisu \",5, 30000, \"https://quangtin131299.000webhostapp.com/tiramisu.png\", 5)");
     }
 }

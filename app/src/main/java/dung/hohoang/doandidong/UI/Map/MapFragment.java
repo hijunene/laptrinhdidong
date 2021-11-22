@@ -19,6 +19,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import dung.hohoang.doandidong.R;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    private final double LAT_STU = 10.738132442971562;
+    private final double LNG_STU = 106.67841656842558;
+
     private GoogleMap mMap;
 
     @Nullable
@@ -41,7 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(@NonNull GoogleMap googleMap){
         mMap = googleMap;
 
-        LatLng latLngSTU = new LatLng(10.738132442971562, 106.67841656842558);
+        LatLng latLngSTU = new LatLng(LAT_STU, LNG_STU);
 
         mMap.addMarker(new MarkerOptions()
                 .position(latLngSTU)

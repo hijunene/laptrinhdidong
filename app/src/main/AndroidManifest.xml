@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dung.hohoang.doandidong">
 
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -14,7 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SQLiteDemo">
-
+        <activity
+            android:name=".UI.EditFoodTypeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".UI.DetailFoodActivity"
+            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -31,7 +36,7 @@
             android:exported="true" />
         <activity
             android:name=".UI.FoodTypeActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".UI.LoginActivity"
             android:exported="true">

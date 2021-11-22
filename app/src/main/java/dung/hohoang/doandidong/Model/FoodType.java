@@ -1,8 +1,9 @@
 package dung.hohoang.doandidong.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FoodType {
+public class FoodType implements Serializable {
     private String id;
     private String name;
     private String image;

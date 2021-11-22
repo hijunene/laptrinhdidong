@@ -1,12 +1,16 @@
 package dung.hohoang.doandidong.UI.Item;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 
 import dung.hohoang.doandidong.Model.FoodType;
@@ -58,9 +62,14 @@ public class FoodTypeItems extends BaseAdapter {
         FoodType foodType = (FoodType) getItem(position);
 
         if(Util.validateURL(foodType.getImage())){
-           Picasso.get().load(foodType.getImage()).into(viewHolder.getImgFoodType());
+           Picasso.with(context)
+                   .load(foodType.getImage()).into(viewHolder.getImgFoodType());
         }else{
-            // Load ảnh từ local store
+            File fileImageFoodType = new File(foodType.getImage());
+
+            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+
+            viewHolder.getImgFoodType().setImageBitmap(bmImageFood);
         }
 
         viewHolder.getTxtTitle().setText(foodType.getName());

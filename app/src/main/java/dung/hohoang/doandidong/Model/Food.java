@@ -7,7 +7,7 @@ public class Food implements Serializable {
     private String name;
     private int quantity;
     private String image;
-    private int amount;
+    private int price;
 
     private FoodType foodType;
 
@@ -16,7 +16,8 @@ public class Food implements Serializable {
         this.name = name;
         this.quantity = quantity;
         this.image = image;
-        this.amount = amount;
+        this.price = amount;
+        foodType = new FoodType();
     }
 
     public FoodType getFoodType() {
@@ -28,6 +29,7 @@ public class Food implements Serializable {
     }
 
     public Food() {
+        foodType = new FoodType();
     }
 
     public String getId() {
@@ -62,11 +64,11 @@ public class Food implements Serializable {
         this.image = image;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getPrice() {
+        return price;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setPrice(int amount) {
+        this.price = amount;
     }
 }

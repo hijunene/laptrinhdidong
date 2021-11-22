@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/background"
     android:layout_height="match_parent"
-    tools:context=".UI.EditFoodActivity">
+    android:background="@drawable/background"
+    tools:context=".UI.EditFoodTypeActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/contrainToolbar"
@@ -42,7 +42,7 @@
 
             <ImageButton
                 android:layout_marginTop="13dp"
-                android:id="@+id/btnImage"
+                android:id="@+id/btnImageFoodType"
                 android:background="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/no_image"
@@ -64,43 +64,11 @@
                 android:layout_height="50dp">
 
                 <EditText
-                    android:id="@+id/edtTitle"
+                    android:id="@+id/edtTitleFoodType"
                     android:inputType="text"
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:hint="Tiêu đề"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-
-                <EditText
-                    android:id="@+id/edtQuality"
-                    android:inputType="number"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    android:hint="Số lượng"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-
-                <EditText
-                    android:id="@+id/edtPrice"
-                    android:inputType="number"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    android:hint="Giá"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

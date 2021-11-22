@@ -42,8 +42,29 @@ public class FoodTypeService {
         }
 
         return foodTypes;
-
     }
 
+    public boolean updateFoodType(FoodType foodType){
+        String sqlCommand = "UPDATE foodtype SET name = \""+ foodType.getName() + "\", image = \""+ foodType.getImage() +"\" WHERE id = " + foodType.getId();
 
+        boolean result = dbManager.createOrEditData(sqlCommand);
+
+        return result;
+    }
+
+    public boolean deleteFoodType(int idFoodType){
+        String sqlCommand = "DELETE FROM foodtype WHERE id = " + idFoodType;
+
+        boolean result = dbManager.createOrEditData(sqlCommand);
+
+        return result;
+    }
+
+    public boolean addNewFoodtype(FoodType foodType){
+        String sqlCommand = "INSERT INTO foodtype VALUES(null, \""+ foodType.getName() +"\", \""+ foodType.getImage() +"\")";
+
+        boolean result = dbManager.createOrEditData(sqlCommand);
+
+        return result;
+    }
 }

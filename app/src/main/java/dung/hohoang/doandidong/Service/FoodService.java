@@ -1,6 +1,7 @@
 package dung.hohoang.doandidong.Service;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,25 @@ public class FoodService {
         }
     }
 
+    public List<Food> getListFoodByIdFoodType(int idFoodType){
+        List<Food> foods = new ArrayList<>();
+        Cursor cursor = dbManager.getDataFromData("SELECT * FROM food WHERE food.idfoodtype = ?", new String[] {String.valueOf(idFoodType)});
+
+        while (cursor.moveToNext()){
+            Food newFood = new Food();
+
+            newFood.setId(String.valueOf(cursor.getInt(0)));
+            newFood.setName(cursor.getString(1));
+            newFood.setQuantity(cursor.getInt(2));
+            newFood.setPrice(cursor.getInt(3));
+            newFood.setImage(cursor.getString(4));
+
+            foods.add(newFood);
+        }
+
+        return foods;
+    }
+
     public List<Food> getListFood(){
         List<Food> foods = new ArrayList<>();
         Cursor cursor = dbManager.getDataFromData("SELECT * FROM food", null);
@@ -37,14 +57,20 @@ public class FoodService {
             newFood.setId(String.valueOf(cursor.getInt(0)));
             newFood.setName(cursor.getString(1));
             newFood.setQuantity(cursor.getInt(2));
-            newFood.setAmount(cursor.getInt(3));
+            newFood.setPrice(cursor.getInt(3));
             newFood.setImage(cursor.getString(4));
 
             foods.add(newFood);
         }
 
         return foods;
+    }
 
+    public boolean addFood(Food newFood){
+//        "INSERT INTO food VALUES(null, \"Cơm gà \",5, 60000, '', 1)"
+        String sqlCommand = "\"INSERT INTO food VALUES(null, \""+ newFood.getName() + "\", "+ newFood.getQuantity() + ", "+ newFood.getPrice() + ", \"" + newFood.getImage() + "\", " + newFood.getFoodType().getId() +")";
+
+        return  dbManager.createOrEditData(sqlCommand);
     }
 
 }
