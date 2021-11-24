@@ -61,15 +61,19 @@ public class FoodTypeItems extends BaseAdapter {
 
         FoodType foodType = (FoodType) getItem(position);
 
-        if(Util.validateURL(foodType.getImage())){
-           Picasso.with(context)
-                   .load(foodType.getImage()).into(viewHolder.getImgFoodType());
+        if(foodType.getImage().isEmpty()){
+            viewHolder.getImgFoodType().setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(foodType.getImage());
+            if(Util.validateURL(foodType.getImage())){
+                Picasso.with(context)
+                        .load(foodType.getImage()).into(viewHolder.getImgFoodType());
+            }else{
+                File fileImageFoodType = new File(foodType.getImage());
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            viewHolder.getImgFoodType().setImageBitmap(bmImageFood);
+                viewHolder.getImgFoodType().setImageBitmap(bmImageFood);
+            }
         }
 
         viewHolder.getTxtTitle().setText(foodType.getName());

@@ -21,8 +21,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import dung.hohoang.doandidong.Model.Food;
 import dung.hohoang.doandidong.Model.FoodType;
 import dung.hohoang.doandidong.R;
+import dung.hohoang.doandidong.Service.FoodService;
 import dung.hohoang.doandidong.Service.FoodTypeService;
 import dung.hohoang.doandidong.UI.Item.FoodTypeItems;
 import dung.hohoang.doandidong.UI.ToolBar.ToolBarCustom;
@@ -39,6 +41,7 @@ public class FoodTypeActivity extends AppCompatActivity {
     TextView txtEditDialog,txtDeleteDialog, txtMessTitleDialog;
     Button btnAddNewFoodType, btnAcceptDialog, btnDetroyDialog;
     FoodTypeService foodTypeService;
+    FoodService foodService;
     List<FoodType> foodTypes;
     FoodTypeItems foodTypeItems;
     ListView lvFoodType;
@@ -65,6 +68,8 @@ public class FoodTypeActivity extends AppCompatActivity {
     public void init(){
         foodTypes = new ArrayList<>();
         foodTypeItems = new FoodTypeItems(foodTypes, FoodTypeActivity.this);
+        foodTypeService = new FoodTypeService(DBUtil.getDBManager(FoodTypeActivity.this));
+        foodService = new FoodService(DBUtil.getDBManager(FoodTypeActivity.this));
     }
 
     private void addEvents() {
@@ -158,17 +163,24 @@ public class FoodTypeActivity extends AppCompatActivity {
             btnAcceptDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    foodTypes.remove(foodTypeSelected);
+                    List<Food> foods = foodService.getListFoodByIdFoodType(Integer.parseInt(foodTypeSelected.getId()));
 
-                    boolean result = foodTypeService.deleteFoodType(Integer.parseInt(foodTypeSelected.getId()));
+                    if(foods.size() == 0){
+                        boolean result = foodTypeService.deleteFoodType(Integer.parseInt(foodTypeSelected.getId()));
 
-                    if (result) {
-                        Toast.makeText(FoodTypeActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(FoodTypeActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                        if (result) {
+                            foodTypes.remove(foodTypeSelected);
+
+                            foodTypeItems.notifyDataSetChanged();
+
+                            Toast.makeText(FoodTypeActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(FoodTypeActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }else{
+                        Toast.makeText(FoodTypeActivity.this, "Bạn không thể xóa loại thức ăn này", Toast.LENGTH_SHORT).show();
                     }
-
-                    foodTypeItems.notifyDataSetChanged();
 
                     dimissDialog(TYPE_DIALOG_NOTIFY);
                 }
@@ -194,15 +206,20 @@ public class FoodTypeActivity extends AppCompatActivity {
     }
 
     public void loadImageFoodType(String pathOrUrl, ImageView imgFoodType){
-        if(Util.validateURL(pathOrUrl)){
-            Picasso.with(FoodTypeActivity.this).load(pathOrUrl).into(imgFoodType);
+        if(pathOrUrl.isEmpty()){
+            imgFoodType.setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(pathOrUrl);
+            if(Util.validateURL(pathOrUrl)){
+                Picasso.with(FoodTypeActivity.this).load(pathOrUrl).into(imgFoodType);
+            }else{
+                File fileImageFoodType = new File(pathOrUrl);
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            imgFoodType.setImageBitmap(bmImageFood);
+                imgFoodType.setImageBitmap(bmImageFood);
+            }
         }
+
     }
 
     public void dimissDialog(int typeDialog){
@@ -222,7 +239,6 @@ public class FoodTypeActivity extends AppCompatActivity {
 
         if(typeDialog == 1){
             dialog.setContentView(R.layout.dialog_notify);
-
         }else{
             dialog.setContentView(R.layout.dialog_action);
         }
@@ -261,7 +277,7 @@ public class FoodTypeActivity extends AppCompatActivity {
     }
 
     public void addControls() {
-        foodTypeService = new FoodTypeService(DBUtil.getDBManager(FoodTypeActivity.this));
+
 
         lvFoodType = findViewById(R.id.lvFoodType);
         btnAddNewFoodType = findViewById(R.id.btnAddNewFoodType);

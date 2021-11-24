@@ -149,14 +149,18 @@ public class EditFoodTypeActivity extends AppCompatActivity {
     }
 
     public void loadImageFoodType(String fileNameOrUrl, ImageView btnImage){
-        if(Util.validateURL(fileNameOrUrl)){
-            Picasso.with(EditFoodTypeActivity.this).load(filePath).into(btnImageFoodType);
+        if(fileNameOrUrl.isEmpty()){
+            btnImage.setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(fileNameOrUrl);
+            if(Util.validateURL(fileNameOrUrl)){
+                Picasso.with(EditFoodTypeActivity.this).load(filePath).into(btnImageFoodType);
+            }else{
+                File fileImageFoodType = new File(fileNameOrUrl);
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            btnImage.setImageBitmap(bmImageFood);
+                btnImage.setImageBitmap(bmImageFood);
+            }
         }
     }
 

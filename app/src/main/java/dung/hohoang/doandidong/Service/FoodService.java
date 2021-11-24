@@ -67,7 +67,7 @@ public class FoodService {
     }
 
     public boolean addFood(Food newFood){
-        String sqlCommand = "\"INSERT INTO food VALUES(null, \""+ newFood.getName() + "\", "+ newFood.getQuantity() + ", "+ newFood.getPrice() + ", \"" + newFood.getImage() + "\", " + newFood.getFoodType().getId() +")";
+        String sqlCommand = "INSERT INTO food VALUES(null, \""+ newFood.getName() + "\", "+ newFood.getQuantity() + ", "+ newFood.getPrice() + ", \"" + newFood.getImage() + "\", " + newFood.getFoodType().getId() +")";
 
         return  dbManager.createOrEditData(sqlCommand);
     }

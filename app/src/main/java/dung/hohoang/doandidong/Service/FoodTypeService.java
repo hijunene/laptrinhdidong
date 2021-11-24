@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dung.hohoang.doandidong.DBManger.DBManager;
+import dung.hohoang.doandidong.Model.Food;
 import dung.hohoang.doandidong.Model.FoodType;
 import dung.hohoang.doandidong.Util.DBUtil;
 

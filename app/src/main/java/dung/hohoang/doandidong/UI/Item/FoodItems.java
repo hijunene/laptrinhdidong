@@ -66,17 +66,21 @@ public class FoodItems extends BaseAdapter {
         Food food = (Food) getItem(position);
 
         foodViewHolder.getTxtTitle().setText(food.getName());
-        foodViewHolder.getTxtPrice().setText("Giá tiền: " + food.getPrice() + "VNĐ");
+        foodViewHolder.getTxtPrice().setText("Giá tiền: " + Util.formatCurrey(food.getPrice()) + "VNĐ");
         foodViewHolder.getTxtQuality().setText("Số lượng: " + food.getQuantity());
 
-        if(Util.validateURL(food.getImage())){
-            Picasso.with(context).load(food.getImage()).into(foodViewHolder.getImgFood());
+        if(food.getImage().isEmpty()){
+            foodViewHolder.getImgFood().setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(food.getImage());
+            if(Util.validateURL(food.getImage())){
+                Picasso.with(context).load(food.getImage()).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(foodViewHolder.getImgFood());
+            }else{
+                File fileImageFoodType = new File(food.getImage());
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            foodViewHolder.getImgFood().setImageBitmap(bmImageFood);
+                foodViewHolder.getImgFood().setImageBitmap(bmImageFood);
+            }
         }
 
         return convertView;

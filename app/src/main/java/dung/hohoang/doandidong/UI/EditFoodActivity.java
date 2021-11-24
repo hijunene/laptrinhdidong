@@ -1,6 +1,8 @@
 package dung.hohoang.doandidong.UI;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +45,8 @@ public class EditFoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_food);
 
+        requestPermission();
+
         addControls();
 
         addEvents();
@@ -51,6 +56,12 @@ public class EditFoodActivity extends AppCompatActivity {
         updateUIFood();
 
         updateToolBarTitle();
+    }
+
+    public void requestPermission() {
+        if(ContextCompat.checkSelfPermission(EditFoodActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE} , Util.REQUEST_PERMISSION_CODE);
+        }
     }
 
     public void updateToolBarTitle() {
@@ -102,6 +113,8 @@ public class EditFoodActivity extends AppCompatActivity {
 
                     if(addNewFood(newFood)){
                         Toast.makeText(EditFoodActivity.this, "Thêm mòn ăn thành công", Toast.LENGTH_SHORT).show();
+
+                        finish();
                     }else{
                         Toast.makeText(EditFoodActivity.this, "Thêm món ăn thất bại", Toast.LENGTH_SHORT).show();
                     }
@@ -125,6 +138,8 @@ public class EditFoodActivity extends AppCompatActivity {
 
                     if(editFood(foodInfo)){
                         Toast.makeText(EditFoodActivity.this, "Sửa mòn ăn thành công", Toast.LENGTH_SHORT).show();
+
+                        finish();
                     }else{
                         Toast.makeText(EditFoodActivity.this, "Sửa món ăn thất bại", Toast.LENGTH_SHORT).show();
                     }
@@ -178,14 +193,18 @@ public class EditFoodActivity extends AppCompatActivity {
     }
 
     public void loadImageFood(String pathOrUrl, ImageView imgFoodType){
-        if(Util.validateURL(pathOrUrl)){
-            Picasso.with(EditFoodActivity.this).load(pathOrUrl).into(imgFoodType);
+        if(pathOrUrl.isEmpty()){
+            imgFoodType.setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(pathOrUrl);
+            if(Util.validateURL(pathOrUrl)){
+                Picasso.with(EditFoodActivity.this).load(pathOrUrl).into(imgFoodType);
+            }else{
+                File fileImageFoodType = new File(pathOrUrl);
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            imgFoodType.setImageBitmap(bmImageFood);
+                imgFoodType.setImageBitmap(bmImageFood);
+            }
         }
     }
 

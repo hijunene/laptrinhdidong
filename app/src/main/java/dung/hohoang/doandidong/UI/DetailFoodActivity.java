@@ -53,20 +53,25 @@ public class DetailFoodActivity extends AppCompatActivity {
 
             txtTitleFood.setText(foodInfo.getName());
             txtQuality.setText("Số lượng: " + foodInfo.getQuantity());
-            txtPrice.setText("Giá tiền: " + Util.formatCurrey(foodInfo.getPrice()));
+            txtPrice.setText("Giá tiền: " + Util.formatCurrey(foodInfo.getPrice()) + "VNĐ");
         }
     }
 
     public void loadImageFoodType(String pathOrUrl, ImageView imgFoodType){
-        if(Util.validateURL(pathOrUrl)){
-            Picasso.with(DetailFoodActivity.this).load(pathOrUrl).into(imgFoodType);
+        if(pathOrUrl.isEmpty()){
+            imgFoodType.setImageResource(R.drawable.no_image);
         }else{
-            File fileImageFoodType = new File(pathOrUrl);
+            if(Util.validateURL(pathOrUrl)){
+                Picasso.with(DetailFoodActivity.this).load(pathOrUrl).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(imgFoodType);
+            }else{
+                File fileImageFoodType = new File(pathOrUrl);
 
-            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
 
-            imgFoodType.setImageBitmap(bmImageFood);
+                imgFoodType.setImageBitmap(bmImageFood);
+            }
         }
+
     }
 
     public void addEvents() {

@@ -2,14 +2,22 @@ package dung.hohoang.doandidong.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +31,15 @@ import dung.hohoang.doandidong.Util.Util;
 
 public class FoodActivity extends AppCompatActivity {
 
-    Button btnAddNewFood;
+    TextView txtMessDialog;
+    ImageView imgFoodDialog;
+    Button btnAddNewFood, btnAcceptDialog, btnDetroyDialog;
     FoodService foodService;
     List<Food> foods;
     FoodItems foodItems;
     ListView lvFood;
+    Dialog dialogNotifyDelete;
+    Food foodSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +84,8 @@ public class FoodActivity extends AppCompatActivity {
 
                 iFood.putExtra("ACTION_CODE", Util.ACTION_CODE_ADD);
 
+                iFood.putExtra("ID_FOODTYPE", Util.getIdFoodType(getIntent()));
+
                 startActivity(iFood);
             }
         });
@@ -79,9 +93,99 @@ public class FoodActivity extends AppCompatActivity {
         lvFood.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                foodSelected = foods.get(position);
+
+                if(foodSelected != null){
+                    dialogNotifyDelete = getDialog();
+
+                    addControlsDialog();
+
+                    addEventDialog();
+
+                    updateInfoFoodDialog(foodSelected);
+
+                    dialogNotifyDelete.show();
+
+                }
+
                 return true;
             }
         });
+    }
+
+    public Dialog getDialog(){
+        Dialog dialog = new Dialog(FoodActivity.this);
+
+        dialog.setContentView(R.layout.dialog_notify);
+
+        return dialog;
+    }
+
+    public void addControlsDialog(){
+        if(dialogNotifyDelete != null){
+            btnAcceptDialog = dialogNotifyDelete.findViewById(R.id.btnAccept);
+            btnDetroyDialog = dialogNotifyDelete.findViewById(R.id.btnDetroy);
+            imgFoodDialog = dialogNotifyDelete.findViewById(R.id.imgFood);
+            txtMessDialog = dialogNotifyDelete.findViewById(R.id.txtMessTitle);
+        }
+    }
+
+    public void updateInfoFoodDialog(Food food){
+        txtMessDialog.setText("Bạn có muốn xóa " + food.getName());
+
+        loadImageFood(food.getImage(), imgFoodDialog);
+    }
+
+    public void loadImageFood(String pathOrUrl, ImageView imgFoodType){
+        if(pathOrUrl.isEmpty()){
+            imgFoodType.setImageResource(R.drawable.no_image);
+        }else{
+            if(Util.validateURL(pathOrUrl)){
+                Picasso.with(FoodActivity.this).load(pathOrUrl).into(imgFoodType);
+            }else{
+                File fileImageFoodType = new File(pathOrUrl);
+
+                Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+
+                imgFoodType.setImageBitmap(bmImageFood);
+            }
+        }
+    }
+
+    public void addEventDialog(){
+        btnAcceptDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(foodSelected != null){
+                    if(foodService.deleteFood(Integer.parseInt(foodSelected.getId()))){
+
+                        foods.remove(foodSelected);
+
+                        foodItems.notifyDataSetChanged();
+
+                        Toast.makeText(FoodActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+
+                    }else{
+                        Toast.makeText(FoodActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                dimissDialog();
+            }
+        });
+
+        btnDetroyDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dimissDialog();
+            }
+        });
+    }
+
+    public void dimissDialog(){
+        if(dialogNotifyDelete != null && dialogNotifyDelete.isShowing()){
+            dialogNotifyDelete.dismiss();
+        }
     }
 
     @Override
