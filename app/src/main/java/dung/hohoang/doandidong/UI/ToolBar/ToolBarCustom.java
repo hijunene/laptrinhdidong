@@ -40,8 +40,6 @@ public class ToolBarCustom extends Fragment {
         addEvents();
     }
 
-
-
     public void addControls(View view){
         btnMenu = view.findViewById(R.id.btnMenu);
         txtTitle = view.findViewById(R.id.txtTitle);

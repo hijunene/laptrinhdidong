@@ -10,9 +10,13 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dung.hohoang.doandidong.Model.Food;
 import dung.hohoang.doandidong.R;
 import dung.hohoang.doandidong.UI.ToolBar.ToolBarCustom;
 
@@ -21,6 +25,7 @@ public class Util {
     public static final int NO_ACTION = -1;
     public static final int ACTION_CODE_ADD = 0;
     public static final int ACTION_CODE_EDIT = 1;
+    public static final int REQUEST_PERMISSION_CODE = 2;
 
 
 
@@ -61,16 +66,27 @@ public class Util {
         return filePath;
     }
 
+    public static String formatCurrey(int input){
+        NumberFormat formatter = new DecimalFormat("#,###");
+
+        String formattedNumber = formatter.format(input);
+
+        return formattedNumber;
+    }
+
     public static void updateTitleToolBar(ToolBarCustom toolBarCustom, String title) {
         toolBarCustom.updateTitle(title);
     }
 
     public static int getIdFoodType(Intent intentInput){
-
         return intentInput.getIntExtra("ID_FOODTYPE", -1);
     }
 
     public static int getActionCode(Intent intentInput){
         return intentInput.getIntExtra("ACTION_CODE", -1);
+    }
+
+    public static Food getFood(Intent intentInput){
+        return (Food) intentInput.getSerializableExtra("FOOD");
     }
 }

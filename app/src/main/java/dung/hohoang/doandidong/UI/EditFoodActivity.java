@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +24,7 @@ import java.io.IOException;
 import dung.hohoang.doandidong.Model.Food;
 import dung.hohoang.doandidong.R;
 import dung.hohoang.doandidong.Service.FoodService;
+import dung.hohoang.doandidong.UI.ToolBar.ToolBarCustom;
 import dung.hohoang.doandidong.Util.DBUtil;
 import dung.hohoang.doandidong.Util.Util;
 
@@ -43,6 +47,14 @@ public class EditFoodActivity extends AppCompatActivity {
         addEvents();
 
         initService();
+
+        updateUIFood();
+
+        updateToolBarTitle();
+    }
+
+    public void updateToolBarTitle() {
+        Util.updateTitleToolBar((ToolBarCustom) getSupportFragmentManager().findFragmentById(R.id.fragToolbar), "Sửa thông tin");
     }
 
     private void initService() {
@@ -69,27 +81,54 @@ public class EditFoodActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String titile = edtTitle.getText().toString().trim();
-                int price = Integer.parseInt(edtPrice.getText().toString().trim());
-                int quality = Integer.parseInt(edtQuality.getText().toString().trim());
+                int actionCode = Util.getActionCode(getIntent());
+                if(actionCode == Util.ACTION_CODE_ADD){
+                    String titile = edtTitle.getText().toString().trim();
+                    int price = Integer.parseInt(edtPrice.getText().toString().trim());
+                    int quality = Integer.parseInt(edtQuality.getText().toString().trim());
 
-                Food newFood = new Food();
+                    Food newFood = new Food();
 
-                newFood.setName(titile);
-                newFood.setPrice(price);
-                newFood.setQuantity(quality);
-                newFood.getFoodType().setId(String.valueOf(Util.getIdFoodType(getIntent())));
+                    newFood.setName(titile);
+                    newFood.setPrice(price);
+                    newFood.setQuantity(quality);
+                    newFood.getFoodType().setId(String.valueOf(Util.getIdFoodType(getIntent())));
 
-                if(filePath != null){
-                    newFood.setImage(Util.getRealPathFormURI(getApplicationContext(), filePath));
+                    if(filePath != null){
+                        newFood.setImage(Util.getRealPathFormURI(getApplicationContext(), filePath));
+                    }else{
+                        newFood.setImage("");
+                    }
+
+                    if(addNewFood(newFood)){
+                        Toast.makeText(EditFoodActivity.this, "Thêm mòn ăn thành công", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(EditFoodActivity.this, "Thêm món ăn thất bại", Toast.LENGTH_SHORT).show();
+                    }
                 }else{
-                    newFood.setImage("");
-                }
+                    String titile = edtTitle.getText().toString().trim();
+                    int price = Integer.parseInt(edtPrice.getText().toString().trim());
+                    int quality = Integer.parseInt(edtQuality.getText().toString().trim());
 
-                if(addNewFood(newFood)){
-                    Toast.makeText(EditFoodActivity.this, "Thêm mòn ăn thành công", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(EditFoodActivity.this, "Thêm món ăn thất bại", Toast.LENGTH_SHORT).show();
+                    Food foodInfo = Util.getFood(getIntent());
+
+                    foodInfo.setName(titile);
+                    foodInfo.setPrice(price);
+                    foodInfo.setQuantity(quality);
+                    foodInfo.getFoodType().setId(String.valueOf(Util.getIdFoodType(getIntent())));
+
+                    if(filePath != null){
+                        foodInfo.setImage(Util.getRealPathFormURI(getApplicationContext(), filePath));
+                    }else{
+                        foodInfo.setImage("");
+                    }
+
+                    if(editFood(foodInfo)){
+                        Toast.makeText(EditFoodActivity.this, "Sửa mòn ăn thành công", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(EditFoodActivity.this, "Sửa món ăn thất bại", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         });
@@ -126,14 +165,36 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    public boolean addNewFood(Food newFood){
+    public void updateUIFood(){
+        Food foodInfo = Util.getFood(getIntent());
 
-        return foodService.addFood(newFood);
+        if(foodInfo != null){
+            loadImageFood(foodInfo.getImage(),btnImage);
+
+            edtQuality.setText(foodInfo.getQuantity() + "");
+            edtTitle.setText(foodInfo.getName());
+            edtPrice.setText(foodInfo.getPrice() + "");
+        }
     }
 
-    public int getActionCode(){
-        Intent iFood = getIntent();
+    public void loadImageFood(String pathOrUrl, ImageView imgFoodType){
+        if(Util.validateURL(pathOrUrl)){
+            Picasso.with(EditFoodActivity.this).load(pathOrUrl).into(imgFoodType);
+        }else{
+            File fileImageFoodType = new File(pathOrUrl);
 
-        return iFood.getIntExtra("ACTION_CODE", -1);
+            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+
+            imgFoodType.setImageBitmap(bmImageFood);
+        }
+    }
+
+    public boolean editFood(Food food){
+        return foodService.updateFood(food);
+    }
+
+
+    public boolean addNewFood(Food newFood){
+        return foodService.addFood(newFood);
     }
 }

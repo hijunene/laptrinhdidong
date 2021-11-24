@@ -34,6 +34,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <ImageView
+            android:scaleType="center"
+            android:translationZ="99dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="48dp"
+            android:layout_marginRight="38dp"
+            android:src="@drawable/ic_baseline_add_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <Button
             android:background="@drawable/background_btn_add"
             android:layout_marginBottom="30dp"
@@ -43,6 +54,8 @@
             android:id="@+id/btnAddNewFoodType"
             android:layout_width="75dp"
             android:layout_height="75dp"/>
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -66,8 +66,8 @@ public class FoodItems extends BaseAdapter {
         Food food = (Food) getItem(position);
 
         foodViewHolder.getTxtTitle().setText(food.getName());
-        foodViewHolder.getTxtPrice().setText(food.getPrice() + "");
-        foodViewHolder.getTxtQuality().setText(food.getQuantity() + "");
+        foodViewHolder.getTxtPrice().setText("Giá tiền: " + food.getPrice() + "VNĐ");
+        foodViewHolder.getTxtQuality().setText("Số lượng: " + food.getQuantity());
 
         if(Util.validateURL(food.getImage())){
             Picasso.with(context).load(food.getImage()).into(foodViewHolder.getImgFood());

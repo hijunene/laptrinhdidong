@@ -67,10 +67,21 @@ public class FoodService {
     }
 
     public boolean addFood(Food newFood){
-//        "INSERT INTO food VALUES(null, \"Cơm gà \",5, 60000, '', 1)"
         String sqlCommand = "\"INSERT INTO food VALUES(null, \""+ newFood.getName() + "\", "+ newFood.getQuantity() + ", "+ newFood.getPrice() + ", \"" + newFood.getImage() + "\", " + newFood.getFoodType().getId() +")";
 
         return  dbManager.createOrEditData(sqlCommand);
+    }
+
+    public boolean deleteFood(int idFood){
+        String sqlCommand = "DELETE FROM food WHERE id = " + idFood;
+
+        return dbManager.createOrEditData(sqlCommand);
+    }
+
+    public boolean updateFood(Food food){
+        String sqlCommand = "UPDATE food SET name_food = \"" + food.getName() + "\", quantity = " + food.getQuantity() +", amount = " + food.getPrice() + ", image = \""+ food.getImage() +"\" WHERE id = " + food.getId();
+
+        return dbManager.createOrEditData(sqlCommand);
     }
 
 }

@@ -2,8 +2,11 @@ package dung.hohoang.doandidong.UI;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -44,6 +47,8 @@ public class EditFoodTypeActivity extends AppCompatActivity {
 
         init();
 
+        requestPermission();
+
         addControls();
 
         addEvents();
@@ -76,6 +81,20 @@ public class EditFoodTypeActivity extends AppCompatActivity {
                     String title = edtFoodType.getText().toString().trim();
 
                     FoodType newFoodType = new FoodType();
+
+                    newFoodType.setName(title);
+                    newFoodType.setImage(Util.getRealPathFormURI(EditFoodTypeActivity.this, filePath));
+
+                    boolean result = foodTypeService.addNewFoodtype(newFoodType);
+
+                    if(result){
+                        Toast.makeText(EditFoodTypeActivity.this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+
+                        finish();
+                    }else{
+                        Toast.makeText(EditFoodTypeActivity.this, "Thêm thất bại", Toast.LENGTH_SHORT).show();
+                    }
+
                 }else{
                     String title = edtFoodType.getText().toString().trim();
 
@@ -158,7 +177,12 @@ public class EditFoodTypeActivity extends AppCompatActivity {
             String link = Util.getRealPathFormURI(EditFoodTypeActivity.this, filePath);
 
             loadImageFoodType(link, btnImageFoodType);
+        }
+    }
 
+    public void requestPermission(){
+        if(ContextCompat.checkSelfPermission(EditFoodTypeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+           requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE} , Util.REQUEST_PERMISSION_CODE);
         }
     }
 

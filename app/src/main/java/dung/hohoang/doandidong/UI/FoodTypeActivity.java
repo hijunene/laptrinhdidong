@@ -4,13 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +31,20 @@ import dung.hohoang.doandidong.Util.Util;
 
 public class FoodTypeActivity extends AppCompatActivity {
 
-    TextView txtEditDialog,txtDeleteDialog;
-    Button btnAddNewFood;
+    final int TYPE_DIALOG_NOTIFY = 1;
+    final int TYPE_DIALOG_NORMAL = 0;
+
+
+    ImageView imgFoodTypeDialog;
+    TextView txtEditDialog,txtDeleteDialog, txtMessTitleDialog;
+    Button btnAddNewFoodType, btnAcceptDialog, btnDetroyDialog;
     FoodTypeService foodTypeService;
     List<FoodType> foodTypes;
     FoodTypeItems foodTypeItems;
     ListView lvFoodType;
     FoodType foodTypeSelected;
+
+    Dialog dialog, dialogNotifyDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +68,7 @@ public class FoodTypeActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
-        btnAddNewFood.setOnClickListener(new View.OnClickListener() {
+        btnAddNewFoodType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent iFoodType = new Intent(FoodTypeActivity.this, EditFoodTypeActivity.class);
@@ -85,7 +99,7 @@ public class FoodTypeActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 foodTypeSelected = foodTypes.get(position);
 
-                Dialog dialog = getDialog();
+                 dialog = getDialog(TYPE_DIALOG_NORMAL);
 
                 dialog.show();
 
@@ -95,44 +109,127 @@ public class FoodTypeActivity extends AppCompatActivity {
 
     }
 
-    public void addControlsByDialog(Dialog dialog){
-        txtEditDialog = dialog.findViewById(R.id.txtEditDialog);
-        txtDeleteDialog = dialog.findViewById(R.id.txtDeleteDialog);
+    public void addControlsByDialog(Dialog dialog, int typeDialog){
+        if (typeDialog == TYPE_DIALOG_NORMAL) {
+            txtEditDialog = dialog.findViewById(R.id.txtEditDialog);
+            txtDeleteDialog = dialog.findViewById(R.id.txtDeleteDialog);
+        } else {
+            btnAcceptDialog = dialog.findViewById(R.id.btnAccept);
+            btnDetroyDialog = dialog.findViewById(R.id.btnDetroy);
+            imgFoodTypeDialog = dialog.findViewById(R.id.imgFood);
+            txtMessTitleDialog = dialog.findViewById(R.id.txtMessTitle);
+        }
     }
 
-    public void addEventsDialog(){
-        txtEditDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent iFoodType = new Intent(FoodTypeActivity.this, EditFoodTypeActivity.class);
+    public void addEventsDialog(int typeDialog){
+        if(typeDialog == 0){
+            txtEditDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                iFoodType.putExtra("ACTION_CODE", Util.ACTION_CODE_EDIT);
+                    Intent iFoodType = new Intent(FoodTypeActivity.this, EditFoodTypeActivity.class);
 
-                if(foodTypeSelected != null){
-                    iFoodType.putExtra("FOOD_TYPE", foodTypeSelected);
+                    iFoodType.putExtra("ACTION_CODE", Util.ACTION_CODE_EDIT);
+
+                    if(foodTypeSelected != null){
+                        iFoodType.putExtra("FOOD_TYPE", foodTypeSelected);
+                    }
+
+                    startActivity(iFoodType);
                 }
+            });
 
-                startActivity(iFoodType);
-            }
-        });
+            txtDeleteDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (foodTypeSelected != null) {
+                        dialogNotifyDelete = getDialog(TYPE_DIALOG_NOTIFY);
 
-        txtDeleteDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                        updateUIDialog(TYPE_DIALOG_NOTIFY);
 
-            }
-        });
+                        dialogNotifyDelete.show();
+
+                        dimissDialog(TYPE_DIALOG_NORMAL);
+                    }
+                }
+            });
+        }else{
+            btnAcceptDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    foodTypes.remove(foodTypeSelected);
+
+                    boolean result = foodTypeService.deleteFoodType(Integer.parseInt(foodTypeSelected.getId()));
+
+                    if (result) {
+                        Toast.makeText(FoodTypeActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FoodTypeActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                    }
+
+                    foodTypeItems.notifyDataSetChanged();
+
+                    dimissDialog(TYPE_DIALOG_NOTIFY);
+                }
+            });
+
+            btnDetroyDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dimissDialog(TYPE_DIALOG_NOTIFY);
+                }
+            });
+        }
     }
 
-    public Dialog getDialog(){
+    public void updateUIDialog(int typeDialog){
+        if(typeDialog == TYPE_DIALOG_NOTIFY){
+            if(foodTypeSelected != null){
+                loadImageFoodType(foodTypeSelected.getImage(), imgFoodTypeDialog);
+
+                txtMessTitleDialog.setText("Bạn đồng ý xóa " + foodTypeSelected.getName());
+            }
+        }
+    }
+
+    public void loadImageFoodType(String pathOrUrl, ImageView imgFoodType){
+        if(Util.validateURL(pathOrUrl)){
+            Picasso.with(FoodTypeActivity.this).load(pathOrUrl).into(imgFoodType);
+        }else{
+            File fileImageFoodType = new File(pathOrUrl);
+
+            Bitmap bmImageFood = BitmapFactory.decodeFile(fileImageFoodType.getAbsolutePath());
+
+            imgFoodType.setImageBitmap(bmImageFood);
+        }
+    }
+
+    public void dimissDialog(int typeDialog){
+        if(typeDialog == 0){
+            if( dialog != null && dialog.isShowing() ){
+                dialog.dismiss();
+            }
+        }else{
+            if(dialogNotifyDelete != null && dialogNotifyDelete.isShowing() ){
+                dialogNotifyDelete.dismiss();
+            }
+        }
+    }
+
+    public Dialog getDialog(int typeDialog){
         Dialog dialog = new Dialog(FoodTypeActivity.this);
 
-        dialog.setContentView(R.layout.dialog_action);
+        if(typeDialog == 1){
+            dialog.setContentView(R.layout.dialog_notify);
 
-        addControlsByDialog(dialog);
+        }else{
+            dialog.setContentView(R.layout.dialog_action);
+        }
 
-        addEventsDialog();
+        addControlsByDialog(dialog, typeDialog);
+
+        addEventsDialog(typeDialog);
 
         return dialog;
     }
@@ -167,7 +264,7 @@ public class FoodTypeActivity extends AppCompatActivity {
         foodTypeService = new FoodTypeService(DBUtil.getDBManager(FoodTypeActivity.this));
 
         lvFoodType = findViewById(R.id.lvFoodType);
-        btnAddNewFood = findViewById(R.id.btnAddNewFoodType);
+        btnAddNewFoodType = findViewById(R.id.btnAddNewFoodType);
     }
 
 }
